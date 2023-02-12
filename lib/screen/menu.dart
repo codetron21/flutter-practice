@@ -8,7 +8,7 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Hooks practice"),
+        title: const Text("Flutter practice"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -32,6 +32,12 @@ class MenuScreen extends StatelessWidget {
                 context.go("/copy");
               },
               child: const Text("Copy"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.go("/local");
+              },
+              child: const Text("Localization"),
             ),
           ],
         ),

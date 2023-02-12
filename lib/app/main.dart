@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_practice/screen/consume.dart';
 import 'package:flutter_practice/screen/copy.dart';
 import 'package:flutter_practice/screen/counter.dart';
+import 'package:flutter_practice/screen/localization.dart';
 import 'package:flutter_practice/screen/menu.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 /// The route configuration.
@@ -37,10 +39,29 @@ final GoRouter _router = GoRouter(
             return const CopyScreen();
           },
         ),
+        GoRoute(
+          path: 'local',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LocalizationScreen();
+          },
+        ),
       ],
     ),
   ],
 );
+
+class LocalizationNotifier extends StateNotifier<Locale> {
+  LocalizationNotifier():super(const Locale.fromSubtags(languageCode: "en"));
+  void toggleLanguage() {
+    if(state.languageCode == "en"){
+      state = const Locale.fromSubtags(languageCode: "id");
+    }else {
+      state = const Locale.fromSubtags(languageCode: "en");
+    }
+  }
+}
+
+final localizationProvider = StateNotifierProvider<LocalizationNotifier,Locale>((_) => LocalizationNotifier());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -48,9 +69,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-      child: MaterialApp.router(
-        routerConfig: _router,
-      ),
+      child:Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? _) {
+          return MaterialApp.router(
+              routerConfig: _router,
+              locale: ref.watch(localizationProvider),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales
+          );
+        },
+      )
     );
   }
 }
